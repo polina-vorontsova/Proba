@@ -1,49 +1,54 @@
 package com.company;
 
-import java.util.Scanner;
+import java.util.LinkedHashSet;
+import java.util.Random;
 
 public class Main {
-
-    //Метод для "чтения записи справа налево"
-    private static String getReversed(String s){
-        String buf = "";
-        for (int i = s.length() - 1; i >= 0; i--){
-            if (s.charAt(i) == ')') buf += '(';
-            else
-            if (s.charAt(i) == '(') buf += ')';
-            else                buf += s.charAt(i);
-        }
-        //Возвращаем перевертыш
-        return buf;
-    }
-
     public static void main(String[] args){
-        Scanner scanner = new Scanner(System.in);
-        RevPolNot toPolish; //Объектная переменная для образования обратной польской записи
+        Random rand = new Random();//генерация случайных чисел
+        //LinkedHashSet для исключения дубликатов ключей.
+        // Сохраняет порядок вставки
+        LinkedHashSet<Integer> set = new LinkedHashSet<Integer>();
 
-        System.out.println("Введите инфиксное выражение: ");
+        BinTree tree = new BinTree();//Создаем двоичное дерево
 
-        try {
-            String buf = scanner.nextLine(); //Читаем выражение
-            toPolish = new RevPolNot(buf); //Делаем обработку
-            String RPN = toPolish.getReversedPolishNotation();
-            System.out.println("Обратная польская запись: " + RPN);  //Выводим польскую запись
-            toPolish = new RevPolNot(getReversed(buf)); //Отправляем на обработку перевернутую исходную строку
-            //Переворачиваем справа налево результат и получаем префиксную запись
-            System.out.println("Префиксная запись: " + getReversed(toPolish.getReversedPolishNotation()));
 
-        } catch (RuntimeException e){ //Обработка ошибок ввода
-            String msg = e.getMessage();
-            switch (msg) {
-                case "SHORT": System.out.println("Слишком короткое выражение!");
-                case "WH_SPACE" : System.out.println("Инфиксное выражение содержит пробелы!!!");
-                case "NUM" : System.out.println("Инфиксное выражение содержит числа!");
-                case "OPERAND_WR" : System.out.println("В инфиксном выражении некорректно записан операнд!");
-                case "OPERATOR_WR" : System.out.println("В инфиксном выражении присутствуют посторонние символы!");
-                default : System.out.println("В инфиксном выражении беда со скобками!");
+        for (int i = 0; i < 50; i++) //Создаем 100 ключей и кладем их во множество
+            set.add(rand.nextInt(60));
+        //Проходимся по множеству и каждый элемент вставляем в дерево двоичного поиска
+        System.out.println("\nПорядок вставки элементов: ");
+        for (Integer integer : set){
+            System.out.print(integer  + " ");
+            tree.insert(integer );
+        }
+        System.out.println();
+
+        tree.getInOrder();  //Симметричный обход
+        tree.getPreOrder(); //Прямой обход
+        tree.getPostOrder(); //Обратный обход
+
+        //Берем половину первых элементов вставленных и удаляем её из дерева
+        int k = set.size() / 2;
+        for (Integer integer : set){
+            tree.delete(integer);
+            k--;
+            if (k == 0)
+                break;
+        }
+
+        //Делаем ещё раз симметричный обход
+        System.out.println("\n\nПосле удаления половины элементов");
+        tree.getInOrder();
+
+        //Демонстрация поиска элементов в дереве
+        // (поскольку первая половина удалена, то первая половина попыток поиска безуспешна)
+        System.out.println("\nИщем элементы в дереве:");
+        for (Integer integer : set){
+            if(tree.find(integer) != null){
+                System.out.println(integer + " found!");
+            }else{
+                System.out.println(integer + " not found!");
             }
         }
-        //Закрываем чтение
-        scanner.close();
     }
 }

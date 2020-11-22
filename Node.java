@@ -1,20 +1,19 @@
 package com.company;
 
-//Класс-узел для хранения пары: операция-приоритет
-
 class Node {
 
-    private final char operation;//Операция
-    private final int priority;//Приоритет
-    public Node next;//Ссылка на следующий элемент стека
+    public int data;        //Хранимые данные
+    public Node left;       //Ссылка на левое поддерево
+    public Node right;      //Cсылка на правое поддерево
 
-    public Node(char operation, int priority){
-        this.operation = operation;
-        this.priority = priority;
-        next = null;
+    public Node(int data){
+        this.data = data;
+        left = null;
+        right = null;
     }
 
-    public char getOperation(){
-        return operation;
+    //Вывод ключа
+    public void show(){
+        System.out.print(data + " ");
     }
 }
